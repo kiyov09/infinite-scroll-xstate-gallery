@@ -6,6 +6,7 @@ import type { Photo } from "pexels";
 
 import { scrollMachine } from "../machines/infiniteScroll.machine";
 import { useOnScreen } from "../hooks/useOnScreen";
+import { GithubLink } from "../components/GithubLink";
 
 type ImageShape = "landscape" | "portrait" | "square";
 type TItem = {
@@ -123,6 +124,7 @@ const Home: NextPage<HomeProps> = ({ items }) => {
 
   return (
     <div className="container mx-auto h-screen max-h-[-webkit-fill-available] space-y-12 bg-neutral-900 py-8 px-4 text-neutral-300">
+      <GithubLink repoUrl="https://github.com/kiyov09/infinite-scroll-xstate-gallery" />
       <div className="space-y-4 p-4 tracking-wide">
         <h1 className="text-center text-3xl font-semibold md:text-5xl">
           XState Infinite Scroll Gallery
