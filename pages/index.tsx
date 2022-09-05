@@ -139,7 +139,8 @@ const Home: NextPage<HomeProps> = ({ items }) => {
 };
 
 export async function getServerSideProps() {
-  const res = await fetch("http://localhost:5004/api/images");
+  const apiUrl = process.env.API;
+  const res = await fetch(`${apiUrl}/api/images`);
   const items = await res.json();
 
   return {
