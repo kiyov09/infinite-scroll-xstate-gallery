@@ -22,7 +22,7 @@ export function useOnScreen(ref: RefObject<HTMLElement>, rootMargin = "0px") {
         observer.unobserve(ref.current);
       }
     };
-  }, []); // Empty array ensures that effect is only run on mount and unmount
+  }, [ref, rootMargin]); // Empty array ensures that effect is only run on mount and unmount
 
   return isIntersecting;
 }
