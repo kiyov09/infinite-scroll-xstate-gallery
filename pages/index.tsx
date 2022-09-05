@@ -1,38 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { NextPage } from "next";
 import { useMachine } from "@xstate/react";
-import type { Photo } from "pexels";
 
 import { scrollMachine } from "../machines/infiniteScroll.machine";
 import { useOnScreen } from "../hooks/useOnScreen";
 import { GithubLink } from "../components/GithubLink";
+import { transformItem } from "../lib/utils";
 
-import type { ImageShape, TItem } from "../components/images/Item";
+import type { TItem } from "../components/images/Item";
 import { Grid } from "../components/images/Grid";
-
-// get random between 3 possible sizes
-const getRandomShape = (): ImageShape => {
-  const shapes = ["landscape", "square", "portrait"];
-  return shapes[Math.floor(Math.random() * shapes.length)] as ImageShape;
-};
-
-const getShape = (width: number, height: number) => {
-  const ratio = width / height;
-  if (ratio > 1) return "landscape";
-  if (ratio < 1) return "portrait";
-  return "square";
-};
-
-const transformItem = (item: Photo): TItem => {
-  // const shape = getShape(item.width, item.height);
-  const shape = getRandomShape();
-  const toGetUrl = shape == "square" ? "medium" : shape;
-  return {
-    url: item.src[toGetUrl],
-    shape,
-    id: item.id,
-  };
-};
 
 type HomeProps = {
   items: TItem[];
