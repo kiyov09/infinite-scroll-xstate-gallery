@@ -134,7 +134,7 @@ const Home: NextPage<HomeProps> = ({ items }) => {
           feature prowered by a XState machine
         </p>
       </div>
-      <div className="grid grid-flow-row-dense grid-cols-2 gap-4 overflow-scroll md:grid-cols-3 lg:grid-cols-4 ">
+      <div className="grid grid-flow-row-dense auto-rows-[200px] grid-cols-2 gap-4 overflow-scroll md:grid-cols-3 lg:grid-cols-4 ">
         <ForEach items={itemsToShow}>
           {(item) => <Item key={item.id} {...item} />}
         </ForEach>
