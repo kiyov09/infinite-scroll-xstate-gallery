@@ -122,7 +122,7 @@ const Home: NextPage<HomeProps> = ({ items }) => {
   }, [isIntersecting]);
 
   return (
-    <div className="container mx-auto h-screen max-h-[-webkit-fill-available] space-y-12 overflow-scroll bg-neutral-900 py-8 px-4 text-neutral-300">
+    <div className="container mx-auto h-screen max-h-[-webkit-fill-available] space-y-12 bg-neutral-900 py-8 px-4 text-neutral-300">
       <div className="space-y-4 p-4 tracking-wide">
         <h1 className="text-center text-3xl font-semibold md:text-5xl">
           XState Infinite Scroll Gallery
@@ -132,7 +132,7 @@ const Home: NextPage<HomeProps> = ({ items }) => {
           feature prowered by a XState machine
         </p>
       </div>
-      <div className="grid grid-flow-row-dense grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-flow-row-dense grid-cols-2 gap-4 overflow-scroll md:grid-cols-3 lg:grid-cols-4 ">
         <ForEach items={itemsToShow}>
           {(item) => <Item key={item.id} {...item} />}
         </ForEach>
