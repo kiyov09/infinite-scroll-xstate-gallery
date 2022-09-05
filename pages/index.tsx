@@ -9,6 +9,7 @@ import { transformItem } from "../lib/utils";
 
 import type { TItem } from "../components/images/Item";
 import { Grid } from "../components/images/Grid";
+import { Spinner } from "../components/Spinner";
 
 type HomeProps = {
   items: TItem[];
@@ -16,6 +17,7 @@ type HomeProps = {
 
 const Home: NextPage<HomeProps> = ({ items }) => {
   const [page, setPage] = useState(4);
+  const [loading, setLoading] = useState(false);
 
   const machine = useMemo(() => scrollMachine(items), [items]);
   const [state, send] = useMachine(machine, {
@@ -35,8 +37,11 @@ const Home: NextPage<HomeProps> = ({ items }) => {
   const { items: itemsToShow } = state.context;
 
   const getMore = useCallback(() => {
-    send({ type: "FETCH_MORE", data: { amount: 4 } });
-    setPage((page) => page + 1);
+    setLoading(true);
+    setTimeout(() => {
+      send({ type: "FETCH_MORE", data: { amount: 8 } });
+      setPage((page) => page + 2);
+    }, 500);
   }, [send]);
 
   const onScreenRef = useRef<HTMLDivElement>(null);
@@ -64,8 +69,10 @@ const Home: NextPage<HomeProps> = ({ items }) => {
       {/* To trigger the getMore using the useOnScreen hook */}
       <div
         ref={onScreenRef}
-        className="col-span-full h-20 w-full opacity-0"
-      ></div>
+        className="relative bottom-8 flex h-24 w-full items-center justify-center opacity-100"
+      >
+        {loading && <Spinner />}
+      </div>
     </div>
   );
 };
