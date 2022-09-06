@@ -2,15 +2,11 @@ import { createMachine, assign } from "xstate";
 
 type InfiniteScrollContext<T> = {
   items: T[];
-  perReq: number;
   isThereMore: boolean;
 };
 
 type InfiniteScrollEvent = {
   type: "FETCH_MORE";
-  data: {
-    amount: number;
-  };
 };
 
 type InfiniteScrollState<T> =
@@ -27,7 +23,7 @@ type InfiniteScrollState<T> =
       context: InfiniteScrollContext<T>;
     };
 
-export const scrollMachine = <T>(items: T[] = [], perReq: number = 1) =>
+export const scrollMachine = <T>(items: T[] = []) =>
   createMachine<
     InfiniteScrollContext<T>,
     InfiniteScrollEvent,
@@ -40,7 +36,6 @@ export const scrollMachine = <T>(items: T[] = [], perReq: number = 1) =>
       initial: items.length ? "idle" : "fetching",
       context: {
         items,
-        perReq,
         isThereMore: true,
       },
       states: {
@@ -80,14 +75,6 @@ export const scrollMachine = <T>(items: T[] = [], perReq: number = 1) =>
           on: {
             FETCH_MORE: {
               target: "fetching",
-              actions: [
-                assign({
-                  perReq: (ctx, event) => {
-                    if (event.type !== "FETCH_MORE") return ctx.perReq;
-                    return event.data.amount;
-                  },
-                }),
-              ],
             },
           },
         },

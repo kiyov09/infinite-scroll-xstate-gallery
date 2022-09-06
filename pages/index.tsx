@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { NextPage } from "next";
-import { useMachine } from "@xstate/react";
 
-import { scrollMachine } from "../machines/infiniteScroll.machine";
 import { useOnScreen } from "../hooks/useOnScreen";
 import { GithubLink } from "../components/GithubLink";
 import { transformItem } from "../lib/utils";
@@ -11,48 +9,41 @@ import type { TItem } from "../components/images/Item";
 import { Grid } from "../components/images/Grid";
 import { Spinner } from "../components/Spinner";
 import { ArrowOnSquare } from "../components/ArrowOnSquare";
+import { useInfiniteScrollMachine } from "../hooks/useInfiniteScrollMachine";
 
 type HomeProps = {
   items: TItem[];
 };
 
 const Home: NextPage<HomeProps> = ({ items }) => {
-  const [page, setPage] = useState(4);
-  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(items ? 2 : 1);
 
-  const machine = useMemo(() => scrollMachine(items), [items]);
-  const [state, send] = useMachine(machine, {
-    services: {
-      fetchMore: async (_ctx) => {
-        const res = await fetch(`/api/images?page=${page}&per_page=8`);
-        const items = await res.json();
+  const fetchMore = async () => {
+    const res = await fetch(`/api/images?page=${page}&per_page=8`);
+    const items = await res.json();
 
-        return {
-          items: items.photos.map(transformItem),
-          // isThereMore: ctx.items.length < 32,
-          isThereMore: true,
-        };
-      },
-    },
-  });
-  const { items: itemsToShow } = state.context;
+    setPage((page) => page + 1);
 
-  const getMore = useCallback(() => {
-    setLoading(true);
-    setTimeout(() => {
-      send({ type: "FETCH_MORE", data: { amount: 8 } });
-      setPage((page) => page + 2);
-    }, 500);
-  }, [send]);
+    return {
+      items: items.photos.map(transformItem),
+      isThereMore: true,
+    };
+  };
+
+  const {
+    items: itemsToShow,
+    fetching,
+    fetchMoreData,
+  } = useInfiniteScrollMachine(fetchMore, items);
 
   const onScreenRef = useRef<HTMLDivElement>(null);
   const isIntersecting = useOnScreen(onScreenRef, "0px");
 
   useEffect(() => {
     if (isIntersecting) {
-      getMore();
+      fetchMoreData();
     }
-  }, [isIntersecting, getMore]);
+  }, [isIntersecting, fetchMoreData]);
 
   return (
     <div className="container mx-auto flex h-screen max-h-[-webkit-fill-available] flex-col space-y-8 bg-neutral-900 py-8 px-4 text-neutral-300">
@@ -73,7 +64,7 @@ const Home: NextPage<HomeProps> = ({ items }) => {
           ref={onScreenRef}
           className="relative bottom-0 flex h-24 w-full items-center justify-center opacity-100"
         >
-          {loading && <Spinner />}
+          {fetching && <Spinner />}
         </div>
       </div>
       <p className="text-center text-sm">
@@ -92,7 +83,7 @@ const Home: NextPage<HomeProps> = ({ items }) => {
 
 export async function getServerSideProps() {
   const apiUrl = process.env.API;
-  const res = await fetch(`${apiUrl}/api/images`);
+  const res = await fetch(`${apiUrl}/api/images?page=1&per_page=8`);
   const items = await res.json();
 
   return {
