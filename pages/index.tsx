@@ -10,6 +10,7 @@ import { transformItem } from "../lib/utils";
 import type { TItem } from "../components/images/Item";
 import { Grid } from "../components/images/Grid";
 import { Spinner } from "../components/Spinner";
+import { ArrowOnSquare } from "../components/ArrowOnSquare";
 
 type HomeProps = {
   items: TItem[];
@@ -54,7 +55,7 @@ const Home: NextPage<HomeProps> = ({ items }) => {
   }, [isIntersecting, getMore]);
 
   return (
-    <div className="container mx-auto h-screen max-h-[-webkit-fill-available] space-y-12 bg-neutral-900 py-8 px-4 text-neutral-300">
+    <div className="container mx-auto flex h-screen max-h-[-webkit-fill-available] flex-col space-y-8 bg-neutral-900 py-8 px-4 text-neutral-300">
       <GithubLink repoUrl="https://github.com/kiyov09/infinite-scroll-xstate-gallery" />
       <div className="space-y-4 p-4 tracking-wide">
         <h1 className="text-center text-3xl font-semibold md:text-5xl">
@@ -65,14 +66,26 @@ const Home: NextPage<HomeProps> = ({ items }) => {
           feature prowered by a XState machine
         </p>
       </div>
-      <Grid items={itemsToShow} />
-      {/* To trigger the getMore using the useOnScreen hook */}
-      <div
-        ref={onScreenRef}
-        className="relative bottom-8 flex h-24 w-full items-center justify-center opacity-100"
-      >
-        {loading && <Spinner />}
+      <div className="flex-1 overflow-scroll rounded-md">
+        <Grid items={itemsToShow} />
+        {/* To trigger the getMore using the useOnScreen hook */}
+        <div
+          ref={onScreenRef}
+          className="relative bottom-0 flex h-24 w-full items-center justify-center opacity-100"
+        >
+          {loading && <Spinner />}
+        </div>
       </div>
+      <p className="text-center text-sm">
+        Images by{" "}
+        <a
+          href="https://pexels.com"
+          className="cursor-pointer text-sky-400 underline underline-offset-2"
+        >
+          Pexels
+          <ArrowOnSquare className={`ml-0.5 mb-0.5 inline-block h-3 w-3`} />
+        </a>
+      </p>
     </div>
   );
 };
